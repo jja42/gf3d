@@ -24,6 +24,7 @@ void gf3d_entity_manager_close()
 
 void gf3d_entity_manager_init(Uint32 entity_max)
 {
+    gf3d_entity_manager.entity_max = entity_max;
     gf3d_entity_manager.entity_list = (Entity*)gfc_allocate_array(sizeof(Entity),entity_max);
     if (!gf3d_entity_manager.entity_list)
     {
@@ -47,7 +48,11 @@ Entity *gf3d_entity_new()
     slog("request for entity failed: all full up");
     return NULL;
 }
-
+void gf3d_entity_set()
+{   
+    gf3d_entity_manager.entity_list[0].health = 20.0;
+    slog("%4.1f \n", gf3d_entity_manager.entity_list[0].health);
+}
 void gf3d_entity_free(Entity *self)
 {
     if (!self)

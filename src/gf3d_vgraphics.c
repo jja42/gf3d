@@ -653,13 +653,26 @@ uint32_t gf3d_vgraphics_find_memory_type(uint32_t typeFilter, VkMemoryPropertyFl
     return 0;
 }
 
-void gf3d_vgraphics_rotate_camera(float degrees)
+void gf3d_vgraphics_rotate_camera(float degrees, int dir)
 {
+    if (dir == 0){
     gfc_matrix_rotate(
         gf3d_vgraphics.ubo.view,
         gf3d_vgraphics.ubo.view,
         degrees,
-        vector3d(0,0,1));
+        vector3d(0,0,1));}
+        if (dir == 1){
+            gfc_matrix_rotate(
+        gf3d_vgraphics.ubo.view,
+        gf3d_vgraphics.ubo.view,
+        degrees,
+        vector3d(0,1,0));}
+        if (dir == 2){
+            gfc_matrix_rotate(
+        gf3d_vgraphics.ubo.view,
+        gf3d_vgraphics.ubo.view,
+        degrees,
+        vector3d(1,0,0));}
 
 }
 

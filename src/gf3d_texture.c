@@ -208,7 +208,6 @@ Texture *gf3d_texture_load(char *filename)
     VkImageCreateInfo imageInfo = {0};
     VkMemoryRequirements memRequirements;
     VkMemoryAllocateInfo allocInfo = {0};
-
     tex = gf3d_texture_get_by_filename(filename);
     if (tex)
     {
@@ -232,13 +231,11 @@ Texture *gf3d_texture_load(char *filename)
     imageSize = surface->w * surface->h * 4;
     
     gf3d_vgraphics_create_buffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &stagingBuffer, &stagingBufferMemory);
-    
     SDL_LockSurface(surface);
         vkMapMemory(gf3d_texture.device, stagingBufferMemory, 0, imageSize, 0, &data);
             memcpy(data, surface->pixels, imageSize);
         vkUnmapMemory(gf3d_texture.device, stagingBufferMemory);
     SDL_UnlockSurface(surface);    
-    
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageInfo.imageType = VK_IMAGE_TYPE_2D;
     imageInfo.extent.width = surface->w;

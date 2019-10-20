@@ -2,6 +2,7 @@
 #define __GF3D_ENTITY_H__
 
 #include "gf3d_model.h"
+#include "simple_json.h"
 
 typedef enum
 {
@@ -12,8 +13,10 @@ typedef enum
 
 typedef struct Entity_S
 {
-    Uint8           _inuse;         /**<flag to keep track if this isntance is in use and should not be reassigned*/
+    Uint8           _inuse; /**<flag to keep track if this isntance is in use and should not be reassigned*/
+    Uint8           _set;
     Model          *model;          /**<the 3d model for this entity*/
+    Matrix4         modelMat;
     Vector3D        position;       /**<position of the entity in 3d space*/
     Vector3D        velocity;       /**<velocity of the entity in 3d space*/
     Vector3D        acceleration;   /**<acceleration of the entity in 3d space*/
@@ -29,6 +32,7 @@ typedef struct Entity_S
     float           experience;
     float           level;
     float           otherStuff;
+    char*           name;
     void *data;                     /**<additional entity specific data*/
     
 }Entity;
@@ -51,5 +55,27 @@ Entity *gf3d_entity_new();
  */
 void    gf3d_entity_free(Entity *self);
 
-void    gf3d_entity_set();
+/**
+ * @brief allows the max for the entity manager to be accessed
+ * @return the max number of entities, 0 if entity manager is not initialized
+ */
+int     gf3d_entity_max();
+
+/**
+ * @brief access an initialized entity
+ * @param index the index of the entity to access
+ * @return pointer to an entity if valid, null otherwise
+ */
+Entity *gf3d_entity_get(int index);
+
+/**
+ * @brief set up an entity to be drawn, using information from 
+ * @param ent pointer to a loaded entity
+ */
+void    gf3d_entity_spawn(Entity* ent);
+/**
+ * @brief takes information from json file and intitializes the entity with that information
+ * @param filename name of the file to be loaded
+ */
+Entity *gf3d_entity_load(char *filename);
 #endif

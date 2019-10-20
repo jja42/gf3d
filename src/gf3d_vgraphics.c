@@ -673,7 +673,11 @@ void gf3d_vgraphics_rotate_camera(float degrees, int dir)
         gf3d_vgraphics.ubo.view,
         degrees,
         vector3d(1,0,0));}
+}
 
+void gf3d_vgraphics_camera_move(Vector3D move)
+{
+   gfc_matrix_translate(gf3d_vgraphics.ubo.view, move);
 }
 
 Pipeline *gf3d_vgraphics_get_graphics_pipeline()

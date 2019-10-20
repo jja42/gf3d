@@ -23,9 +23,8 @@ int main(int argc,char *argv[])
     VkCommandBuffer commandBuffer;
     Model *model = NULL;
     Matrix4 modelMat;
-    Model *model2 = NULL;
-    Matrix4 modelMat2;
-    
+    /*Model *model2 = NULL;
+    Matrix4 modelMat2;*/
     for (a = 1; a < argc;a++)
     {
         if (strcmp(argv[a],"-disable_validate") == 0)
@@ -45,40 +44,64 @@ int main(int argc,char *argv[])
         validate                //validation
     );
     gf3d_entity_manager_init(2);
-    gf3d_entity_new();
-    gf3d_entity_set();
     // main game loop
     slog("gf3d main loop begin");
-    model = gf3d_model_load("dino");
+    gf3d_entity_spawn(gf3d_entity_load("dino"));
     //model = gf3d_model_load_animated("agumon_animated",5, 29);
 
     gfc_matrix_identity(modelMat);
-    model2 = gf3d_model_load("dito");
-    gfc_matrix_identity(modelMat2);
-   gfc_matrix_make_translation(
-            modelMat,
-            vector3d(0,0,0)
-        );
-        gfc_matrix_rotate(
+    //gfc_matrix_translate(modelMat,vector3d(1.25,0,0));
+   // model = gf3d_model_load("dino");
+    /*gfc_matrix_rotate(
             modelMat,
             modelMat,
-            0,
-            vector3d(10,0,10));
+            3.10,
+            vector3d(0,0,1)
+        );*/
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         //update game things here
-    if (keys[SDL_SCANCODE_DOWN]) {
-    gf3d_vgraphics_rotate_camera(0.001, 1);
+        if (keys[SDL_SCANCODE_UP]){
+            gfc_matrix_make_translation(modelMat,vector3d(0,-.01,0));
+            //gf3d_vgraphics_camera_move(vector3d(0,0,.01));
+        }
+        if (keys[SDL_SCANCODE_DOWN]){
+            gfc_matrix_translate(modelMat,vector3d(0,.01,0));
+        }
+        if (keys[SDL_SCANCODE_LEFT]){
+            //gfc_matrix_translate(modelMat,vector3d(.01,0,0));
+             gfc_matrix_rotate(
+            modelMat,
+            modelMat,
+            .001,
+            vector3d(0,0,.001));
+        }
+        if (keys[SDL_SCANCODE_RIGHT]){
+            gfc_matrix_translate(modelMat,vector3d(-.01,0,0));
+           /*gfc_matrix_rotate(
+            modelMat,
+            modelMat,
+            .001,
+            vector3d(0,0,-.001));*/
+        }
+        
+    if (keys[SDL_SCANCODE_DOWN]&&keys[SDL_SCANCODE_R]) {
+    gf3d_vgraphics_rotate_camera(-0.001, 2);
     }
-    if (keys[SDL_SCANCODE_RIGHT]) {
+    if (keys[SDL_SCANCODE_RIGHT]&&keys[SDL_SCANCODE_R]) {
     gf3d_vgraphics_rotate_camera(0.001, 0);
     }
-    if (keys[SDL_SCANCODE_LEFT]) {
+    if (keys[SDL_SCANCODE_LEFT]&&keys[SDL_SCANCODE_R]) {
+    gf3d_vgraphics_rotate_camera(-0.001, 0);
+    }
+    if (keys[SDL_SCANCODE_UP]&&keys[SDL_SCANCODE_R]){
     gf3d_vgraphics_rotate_camera(0.001, 2);
     }
-        
+    if (keys[SDL_SCANCODE_RETURN]){
+        //gf3d_entity_set();
+    }
 
         // configure render command for graphics command pool
         // for each mesh, get a command and configure it from the pool
@@ -89,7 +112,16 @@ int main(int argc,char *argv[])
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat,(Uint32)frame);
                // frame = frame + 0.05;
                 //if (frame >= 24)frame = 0;
-  //              gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
+        int j = gf3d_entity_max() - 1;
+        for (int i = 0; i < j; i++)
+    {
+        if (gf3d_entity_get(i)->model != NULL){
+            gf3d_model_draw(gf3d_entity_get(i)->model,bufferFrame,commandBuffer,gf3d_entity_get(i)->modelMat);
+        }
+        else{
+            continue;}
+    }
+           // gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
                 
             gf3d_command_rendering_end(commandBuffer);
             

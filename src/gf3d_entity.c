@@ -48,12 +48,24 @@ Entity *gf3d_entity_new()
     slog("request for entity failed: all full up");
     return NULL;
 }
-void gf3d_entity_spawn(Entity * ent)
+void gf3d_entity_spawn(char* filename)
 {   
-    ent->model = gf3d_model_load(ent->name);
-    gfc_matrix_identity(ent->modelMat);
+    Entity * ent = gf3d_entity_load(filename);
+    ent->model = gf3d_model_load(&ent->name);
+    gfc_matrix_identity(&ent->modelMat);
      gfc_matrix_make_translation(
-            ent->modelMat,
+            &ent->modelMat,
+            ent->position
+        );
+}
+
+void gf3d_entity_spawn_anim(char* filename, Uint32 startframe, Uint32 endframe)
+{   
+    Entity * ent = gf3d_entity_load(filename);
+    ent->model = gf3d_model_load_animated(&ent->name,startframe,endframe);
+    gfc_matrix_identity(&ent->modelMat);
+     gfc_matrix_make_translation(
+            &ent->modelMat,
             ent->position
         );
 }
@@ -84,11 +96,14 @@ Entity *gf3d_entity_load(char *filename)
         gf3d_entity_free(ent);
         return NULL;
     }
-    strncpy(ent->name,sj_get_string_value(sj_object_get_value(ent_info,"name")),GFCLINELEN);
-    
-    sj_get_integer_value((ent_info,"position.x"),&ent->position.x);
-    sj_get_integer_value((ent_info,"position.y"),&ent->position.y);
-    sj_get_integer_value((ent_info,"position.z"),&ent->position.z);
+    strncpy(&ent->name,sj_get_string_value(sj_object_get_value(ent_info,"name")),GFCLINELEN);
+    int x = 0;
+    sj_get_integer_value(sj_object_get_value(ent_info,"position.x"),x);
+    int y = 0;
+    sj_get_integer_value(sj_object_get_value(ent_info,"position.y"),y);
+    int z= 0;
+    sj_get_integer_value(sj_object_get_value(ent_info,"position.z"),z);
+    ent-> position = vector3d(x,y,z);
     sj_free(json);
     slog("loaded ent info for %s",filename);
     return ent;

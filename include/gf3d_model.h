@@ -70,8 +70,7 @@ Model * gf3d_model_new();
  * @param modelMat the model matrix (MVP)
  * @param frame the frame of animation to use for the model
  */
-void gf3d_model_draw(Model *model,Uint32 bufferFrame,VkCommandBuffer commandBuffer,Matrix4 modelMat);
-void gf3d_model_draw_anim(Model *model,Uint32 bufferFrame,VkCommandBuffer commandBuffer,Matrix4 modelMat,Uint32 frame);
+void gf3d_model_draw(Model *model,Uint32 bufferFrame,VkCommandBuffer commandBuffer,Matrix4 modelMat,Uint32 frame);
 void gf3d_model_free(Model *model);
 
 /**

@@ -78,6 +78,22 @@ Model * gf3d_model_new()
     return NULL;
 }
 
+Model * gf3d_model_load(char * filename)
+{
+    TextLine assetname;
+    Model *model;
+    model = gf3d_model_new();
+    if (!model)return NULL;
+    snprintf(assetname,GFCLINELEN,"models/%s.obj",filename);
+    model->mesh = (Mesh**)gfc_allocate_array(sizeof(Mesh*),1);
+    model->mesh[0] = gf3d_mesh_load(assetname);
+    model->frameCount = 1;
+    snprintf(assetname,GFCLINELEN,"images/%s.png",filename);
+    model->texture = gf3d_texture_load(assetname);
+    
+    return model;
+}
+
 Model * gf3d_model_load_animated(char * filename,Uint32 startFrame, Uint32 endFrame)
 {
     TextLine assetname;
@@ -111,36 +127,6 @@ Model * gf3d_model_load_animated(char * filename,Uint32 startFrame, Uint32 endFr
     return model;
 }
 
-Model * gf3d_model_load(char * filename)
-{
-    TextLine assetname;
-    Model *model;
-    model = gf3d_model_new();
-    if (!model)return NULL;
-    snprintf(assetname,GFCLINELEN,"models/%s.obj",filename);
-    model->mesh = gf3d_mesh_load(assetname);
-    snprintf(assetname,GFCLINELEN,"images/%s.png",filename);
-    model->texture = gf3d_texture_load(assetname);
-    
-    return model;
-}
-
-Model * gf3d_model_load_anim(char * filename)
-{
-    TextLine assetname;
-    Model *model;
-    model = gf3d_model_new();
-    if (!model)return NULL;
-    snprintf(assetname,GFCLINELEN,"models/%s.obj",filename);
-    model->mesh = (Mesh**)gfc_allocate_array(sizeof(Mesh*),1);
-    model->mesh[0] = gf3d_mesh_load(assetname);
-
-    snprintf(assetname,GFCLINELEN,"images/%s.png",filename);
-    model->texture = gf3d_texture_load(assetname);
-    
-    return model;
-}
-
 void gf3d_model_free(Model *model)
 {
     gf3d_model_delete(model);
@@ -167,25 +153,8 @@ void gf3d_model_delete(Model *model)
     }
     gf3d_texture_free(model->texture);
 }
-void gf3d_model_draw(Model *model,Uint32 bufferFrame, VkCommandBuffer commandBuffer,Matrix4 modelMat)
-{
-    VkDescriptorSet *descriptorSet = NULL;
-    if (!model)
-    {
-        slog("cannot render a NULL model");
-        return;
-    }
-    descriptorSet = gf3d_pipeline_get_descriptor_set(gf3d_model.pipe, bufferFrame);
-    if (descriptorSet == NULL)
-    {
-        slog("failed to get a free descriptor Set for model rendering");
-        return;
-    }
-    gf3d_model_update_basic_model_descriptor_set(model,*descriptorSet,bufferFrame,modelMat);
-    gf3d_mesh_render(model->mesh,commandBuffer,descriptorSet);
-}
 
-void gf3d_model_draw_anim(Model *model,Uint32 bufferFrame,VkCommandBuffer commandBuffer,Matrix4 modelMat,Uint32 frame)
+void gf3d_model_draw(Model *model,Uint32 bufferFrame,VkCommandBuffer commandBuffer,Matrix4 modelMat,Uint32 frame)
 {
     VkDescriptorSet *descriptorSet = NULL;
     if (!model)

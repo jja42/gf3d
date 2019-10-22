@@ -69,10 +69,15 @@ int     gf3d_entity_max();
 Entity *gf3d_entity_get(int index);
 
 /**
- * @brief set up an entity to be drawn, using information from 
+ * @brief set up an entity to be drawn, using information from entity load
  * @param ent pointer to a loaded entity
  */
-void    gf3d_entity_spawn(Entity* ent);
+void    gf3d_entity_spawn(char* filename);
+/**
+ * @brief set up an animated entity to be drawn, using information from entity load
+ * @param ent pointer to a loaded entity
+ */
+void    gf3d_entity_spawn_anim(char* filename, Uint32 startframe, Uint32 endframe);
 /**
  * @brief takes information from json file and intitializes the entity with that information
  * @param filename name of the file to be loaded

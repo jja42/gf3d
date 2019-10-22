@@ -107,7 +107,7 @@ void gf3d_vgraphics_init(
     gfc_matrix_identity(gf3d_vgraphics.ubo.proj);
     gfc_matrix_view(
         gf3d_vgraphics.ubo.view,
-        vector3d(2,40,2),
+        vector3d(0,40,0),
         vector3d(0,0,0),
         vector3d(0,0,1)
     );
@@ -115,7 +115,7 @@ void gf3d_vgraphics_init(
         gf3d_vgraphics.ubo.proj,
         45 * GFC_DEGTORAD,
         renderWidth/(float)renderHeight,
-        0.1f,
+        .1f,
         100
     );
     

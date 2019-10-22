@@ -14,6 +14,7 @@
 
 int main(int argc,char *argv[])
 {
+    Uint8 attacking = 0;
     int done = 0;
     int a;
     Uint8 validate = 1;
@@ -22,9 +23,7 @@ int main(int argc,char *argv[])
     Uint32 bufferFrame = 0;
     VkCommandBuffer commandBuffer;
     Model *model = NULL;
-    Matrix4 modelMat;
-    /*Model *model2 = NULL;
-    Matrix4 modelMat2;*/
+    Matrix4 modelMat2;
     for (a = 1; a < argc;a++)
     {
         if (strcmp(argv[a],"-disable_validate") == 0)
@@ -46,45 +45,48 @@ int main(int argc,char *argv[])
     gf3d_entity_manager_init(2);
     // main game loop
     slog("gf3d main loop begin");
-    gf3d_entity_spawn(gf3d_entity_load("dino"));
+    //gf3d_entity_spawn("burger");
+    gf3d_entity_spawn_anim("samurai",1,25);
+    Entity *player = gf3d_entity_get(0);
+    gfc_matrix_translate(player->modelMat,vector3d(0,0,-70));
+    player->modelMat[3][3] += 7;
     //model = gf3d_model_load_animated("agumon_animated",5, 29);
-
-    gfc_matrix_identity(modelMat);
-    //gfc_matrix_translate(modelMat,vector3d(1.25,0,0));
-   // model = gf3d_model_load("dino");
-    /*gfc_matrix_rotate(
-            modelMat,
-            modelMat,
-            3.10,
-            vector3d(0,0,1)
-        );*/
+    model = gf3d_model_load("warehouse");
+    gfc_matrix_identity(modelMat2);
+    gfc_matrix_rotate(
+            player->modelMat,
+            player->modelMat,
+            1.0,
+            vector3d(1,0,0)
+        );
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         //update game things here
         if (keys[SDL_SCANCODE_UP]){
-            gfc_matrix_make_translation(modelMat,vector3d(0,-.01,0));
-            //gf3d_vgraphics_camera_move(vector3d(0,0,.01));
+            gfc_matrix_translate(player->modelMat,vector3d(0,-.01,0));
+            gf3d_vgraphics_camera_move(vector3d(0,0,.01));
         }
         if (keys[SDL_SCANCODE_DOWN]){
-            gfc_matrix_translate(modelMat,vector3d(0,.01,0));
+            gfc_matrix_translate(gf3d_entity_get(0)->modelMat,vector3d(0,.01,0));
+            gf3d_vgraphics_camera_move(vector3d(0,0,-.01));
         }
         if (keys[SDL_SCANCODE_LEFT]){
             //gfc_matrix_translate(modelMat,vector3d(.01,0,0));
              gfc_matrix_rotate(
-            modelMat,
-            modelMat,
+            player->modelMat,
+            player->modelMat,
             .001,
-            vector3d(0,0,.001));
+            vector3d(0,.001,0));
         }
         if (keys[SDL_SCANCODE_RIGHT]){
-            gfc_matrix_translate(modelMat,vector3d(-.01,0,0));
-           /*gfc_matrix_rotate(
-            modelMat,
-            modelMat,
+            //gfc_matrix_translate(gf3d_entity_get(0)->modelMat,vector3d(-.01,0,0));
+           gfc_matrix_rotate(
+            player->modelMat,
+            player->modelMat,
             .001,
-            vector3d(0,0,-.001));*/
+            vector3d(0,-.001,0));
         }
         
     if (keys[SDL_SCANCODE_DOWN]&&keys[SDL_SCANCODE_R]) {
@@ -100,7 +102,9 @@ int main(int argc,char *argv[])
     gf3d_vgraphics_rotate_camera(0.001, 2);
     }
     if (keys[SDL_SCANCODE_RETURN]){
-        //gf3d_entity_set();
+        if(attacking != 1){
+        attacking = 1;
+        }
     }
 
         // configure render command for graphics command pool
@@ -108,15 +112,25 @@ int main(int argc,char *argv[])
         bufferFrame = gf3d_vgraphics_render_begin();
         gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
             commandBuffer = gf3d_command_rendering_begin(bufferFrame);
-        gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
-                //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat,(Uint32)frame);
-               // frame = frame + 0.05;
-                //if (frame >= 24)frame = 0;
+        //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
+            gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat2,0);
+            if (attacking != 1){
+                gf3d_model_draw(player->model, bufferFrame,commandBuffer,player->modelMat,0);
+            }
+            else{
+            gf3d_model_draw(player->model,bufferFrame,commandBuffer,player->modelMat,(Uint32)frame);
+               frame = frame + 0.03;
+                if (frame >= 24){
+                    attacking = 0;
+                    frame = 0;
+                }
+            }
+            
         int j = gf3d_entity_max() - 1;
-        for (int i = 0; i < j; i++)
+        for (int i = 1; i < j; i++)
     {
         if (gf3d_entity_get(i)->model != NULL){
-            gf3d_model_draw(gf3d_entity_get(i)->model,bufferFrame,commandBuffer,gf3d_entity_get(i)->modelMat);
+            gf3d_model_draw(gf3d_entity_get(i)->model,bufferFrame,commandBuffer,gf3d_entity_get(i)->modelMat,0);
         }
         else{
             continue;}
@@ -128,7 +142,7 @@ int main(int argc,char *argv[])
         gf3d_vgraphics_render_end(bufferFrame);
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
-    }    
+    }
     
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup

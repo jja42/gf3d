@@ -61,20 +61,22 @@ int main(int argc,char *argv[])
     model = gf3d_model_load("floor");
     model2 = gf3d_model_load("Wall");
     gfc_matrix_identity(modelMat);
-    //modelMat[3][3] -= .95;
-    gf3d_entity_spawn("dino");
+    gf3d_entity_spawn_anim("robo",1,10);
     gfc_matrix_identity(modelMat2);
     modelMat2[3][3] -= .9;
     modelMat[3][3] -= .8;
+    enemy->modelMat[3][3] += 1;
     gfc_matrix_rotate( modelMat2, modelMat2, 1.6, vector3d(1,0,0));
     gfc_matrix_rotate( modelMat, modelMat, 1.6, vector3d(0,0,1));
     gfc_matrix_rotate( modelMat, modelMat, 1.55, vector3d(1,0,0));
     gfc_matrix_rotate( player->modelMat, player->modelMat, 1.6, vector3d(1,0,0));
     gfc_matrix_rotate( player->modelMat, player->modelMat, 5.2, vector3d(0,1,0));
     gfc_matrix_translate(modelMat2, vector3d(0,0,-7.35));
-    gfc_matrix_rotate( enemy->modelMat, enemy->modelMat, 1.5, vector3d(0,0,1));
-    Box a = gf3d_box(player->position, 2.0, 10.0, 10.0);
-    Box b = gf3d_box(enemy->position, 3.3, 5.0, 5.0);
+    gfc_matrix_rotate( enemy->modelMat, enemy->modelMat, 1.5, vector3d(1,0,0));
+    gfc_matrix_translate(enemy->modelMat, vector3d(0,0,12.25));
+    Box a = gf3d_box(player->position, 2.5, 2.0, 10.0);
+    Box b = gf3d_box(enemy->position, 5.0, 5.0, 5.0);
+    gf3d_box_update(&b,enemy->position);
     Box hitbox = gf3d_box(player->position,11,1,1);
     while(!done)
     {
@@ -84,14 +86,30 @@ int main(int argc,char *argv[])
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         //update game things here
         if (keys[SDL_SCANCODE_UP]){
-            player->position.z += .01;
+            player->position.y -= .01;
+            gf3d_box_update(&a,player->position);
+            if(gf3d_box_overlap(a,b)){
+                slog("Can't move, colliding!");
+            player->position.y +=.01;
+            gf3d_box_update(&a,player->position);
+            }
+            else{
             gfc_matrix_translate(player->modelMat,vector3d(0,-.01,0));
             gf3d_vgraphics_camera_move(vector3d(0,0,.01));
+            }
         }
         if (keys[SDL_SCANCODE_DOWN]){
-            player->position.z += .01;
+             player->position.y += .01;
+            gf3d_box_update(&a,player->position);
+            if(gf3d_box_overlap(a,b)){
+                slog("Can't move, colliding!");
+            player->position.y -=.01;
+            gf3d_box_update(&a,player->position);
+            }
+            else{
             gfc_matrix_translate(player->modelMat,vector3d(0,.01,0));
             gf3d_vgraphics_camera_move(vector3d(0,0,-.01));
+            }
         }
         if (keys[SDL_SCANCODE_LEFT]){
             player->position.x+=.01;
@@ -165,8 +183,10 @@ int main(int argc,char *argv[])
         bufferFrame = gf3d_vgraphics_render_begin();
         gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
             commandBuffer = gf3d_command_rendering_begin(bufferFrame);
-            gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat,0);
-            gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat2,0);
+            //gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat,0);
+            //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat2,0);
+            //gf3d_model_draw(a.model,bufferFrame,commandBuffer,a.mat,0);
+             gf3d_model_draw(b.model,bufferFrame,commandBuffer,b.mat,0);
             if (attacking == 1){
                 gf3d_model_draw(player->model,bufferFrame,commandBuffer,player->modelMat,(Uint32)frame);
                frame = frame + 0.05;
@@ -185,7 +205,13 @@ int main(int argc,char *argv[])
                 }
                }
                if (attack == 1){
-               if (frame >= 38){
+               if(frame >= 31 && hit == 0){
+                hit =  1;
+                if(gf3d_box_overlap(b,hitbox)){
+                slog("hit entity two");
+                }
+               }
+                   if (frame >= 38){
                    frame = 0;
                    hit = 0;
                    attacking = 0;
@@ -193,6 +219,12 @@ int main(int argc,char *argv[])
                 }
                }
                 if (attack == 2){
+                if(frame >= 54 && hit == 0){
+                hit =  1;
+                if(gf3d_box_overlap(b,hitbox)){
+                slog("hit entity three");
+                }
+                }
                if (frame >= 70){
                    frame = 0;
                    hit = 0;

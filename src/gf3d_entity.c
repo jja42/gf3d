@@ -53,9 +53,8 @@ void gf3d_entity_spawn(char* filename)
     Entity * ent = gf3d_entity_load(filename);
     ent->model = gf3d_model_load(&ent->name);
     gfc_matrix_identity(&ent->modelMat);
-    //slog ("%f", ent->position.x);
      gfc_matrix_make_translation(
-            ent->modelMat,
+            &ent->modelMat,
             ent->position
         );
 }

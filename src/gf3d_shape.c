@@ -1,19 +1,30 @@
 #include "gf3d_shape.h"
 #include "simple_logger.h"
+#include "gf3d_model.h"
+#include "gfc_matrix.h"
 
 Box gf3d_box(Vector3D pos, float w, float h,float d)
 {
     Box r;
-    r.pos = vector3d(pos.x,pos.y,pos.z);
+    r.model = gf3d_model_load("cube");
+    gfc_matrix_identity(r.mat);
+    r.pos.x = pos.x;
+    r.pos.y = pos.y;
+    r.pos.z = pos.z;
     r.width = w;
     r.height = h;
     r.depth = d;
+    gfc_matrix_make_translation(r.mat, pos);
     return r;
 }
 void gf3d_box_update(Box *r,Vector3D pos){
     r->pos.x = pos.x;
     r->pos.y = pos.y;
     r->pos.z = pos.z;
+    gfc_matrix_make_translation(r->mat, pos);
+    r->mat[0][0] = r->width;
+    r->mat[1][1] = r->height;
+    r->mat[2][2] = r->depth;
 }
     
 Sphere gf3d_sphere(Vector3D pos, float r)
@@ -37,9 +48,9 @@ Uint8 gf3d_point_in_box(Vector3D pos,Box r)
 
 Uint8 gf3d_box_overlap(Box a,Box b)
 {
-    if (((a.pos.x +a.width >= b.pos.x-b.width)&&(a.pos.x -a.width <= b.pos.x+b.width))&&
-        ((a.pos.y +a.height >= b.pos.y-b.height)&&(a.pos.y -a.height <= b.pos.y+b.height))&&
-        ((a.pos.z +a.depth >= b.pos.x-b.depth)&&(a.pos.x -a.depth <= b.pos.x+b.depth)))
+    if ((a.pos.x +a.width >= b.pos.x-b.width)&&(a.pos.x -a.width <= b.pos.x+b.width)&&
+        (a.pos.y +a.height >= b.pos.y-b.height)&&(a.pos.y -a.height <= b.pos.y+b.height)&&
+        (a.pos.z +a.depth >= b.pos.z-b.depth)&&(a.pos.z -a.depth <= b.pos.z+b.depth))
     {
         return 1;
     }

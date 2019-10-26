@@ -2,6 +2,8 @@
 #define __GF3D_SHAPE_H__
 
 #include "gfc_vector.h"
+#include "gfc_matrix.h"
+#include "gf3d_model.h"
 #include <SDL.h>
 
 typedef struct
@@ -19,6 +21,8 @@ typedef struct
 {
     Vector3D pos;
     float width,height,depth;
+    Model* model;
+    Matrix4 mat;
 }Box;
 
 /**

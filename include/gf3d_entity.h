@@ -29,10 +29,11 @@ typedef struct Entity_S
     float           health;
     float           healthmax;
     float           armor;
-    float           experience;
-    float           level;
+    Uint32          hitstun;
+    float           damage;
     float           otherStuff;
     char*           name;
+    char*           tag;
     void *data;                     /**<additional entity specific data*/
     
 }Entity;
@@ -53,13 +54,13 @@ Entity *gf3d_entity_new();
  * @brief free an active entity
  * @param self the entity to free
  */
-void    gf3d_entity_free(Entity *self);
+void  gf3d_entity_free(Entity *self);
 
 /**
  * @brief allows the max for the entity manager to be accessed
  * @return the max number of entities, 0 if entity manager is not initialized
  */
-int     gf3d_entity_max();
+int gf3d_entity_max();
 
 /**
  * @brief access an initialized entity
@@ -72,12 +73,12 @@ Entity *gf3d_entity_get(int index);
  * @brief set up an entity to be drawn, using information from entity load
  * @param ent pointer to a loaded entity
  */
-void    gf3d_entity_spawn(char* filename);
+void gf3d_entity_spawn(char* filename);
 /**
  * @brief set up an animated entity to be drawn, using information from entity load
  * @param ent pointer to a loaded entity
  */
-void    gf3d_entity_spawn_anim(char* filename, Uint32 startframe, Uint32 endframe);
+void gf3d_entity_spawn_anim(char* filename, Uint32 startframe, Uint32 endframe);
 /**
  * @brief takes information from json file and intitializes the entity with that information
  * @param filename name of the file to be loaded

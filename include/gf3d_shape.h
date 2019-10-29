@@ -4,6 +4,7 @@
 #include "gfc_vector.h"
 #include "gfc_matrix.h"
 #include "gf3d_model.h"
+#include "gf3d_entity.h"
 #include <SDL.h>
 
 typedef struct
@@ -23,6 +24,8 @@ typedef struct
     float width,height,depth;
     Model* model;
     Matrix4 mat;
+    Vector3D offset;
+    Entity* ent;
 }Box;
 
 /**
@@ -30,36 +33,11 @@ typedef struct
  * @param pos the position of the box
  * @param w the width of the box
  * @param h the height of the box
+ * @param offset vector offset to align with model
+ * @param Ent the entity to associate with this box
  * @return a GF3D Box pointer
  */
-Box gf3d_box(Vector3D pos, float w, float h, float d);
-
-/**
- * @brief make a GF3D Sphere
- * @param x the center x
- * @param y the center y
- * @param r the radius
- * @return a GF3D Box
- */
-Sphere gf3d_sphere(Vector3D, float r);
-
-/**
- * @brief make an edge shape basesd on the points provided
- * @param x1 the X component of starting point
- * @param y1 the Y component of starting point
- * @param x2 the X component of ending point
- * @param y2 the Y component of ending point
- * @return the shape
- */
-Edge gf3d_edge(float x1,float y1,float x2,float y2, float z1, float z2);
-
-/**
- * @brief determine if the point lies within the box
- * @param pos the point to check
- * @param r the box to check
- * @return true if the point is inside the box, false otherwise
- */
-Uint8 gf3d_point_in_box(Vector3D pos,Box r);
+Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *ent);
 
 /**
  * @brief check if two boxes are overlapping
@@ -70,29 +48,12 @@ Uint8 gf3d_point_in_box(Vector3D pos,Box r);
 Uint8 gf3d_box_overlap(Box a,Box b);
 
 /**
- * @brief check if the point lies within the sphere c
- * @param p the point to check
- * @param c the sphere to check
- * @return true if the point is in the sphere, false otherwise
+ * @brief check if two boxes are overlapping with a touching the rightmost side of b
+ * @param a pointer to box A
+ * @param b pointer to box B
+ * @return true if there is any overlap on that side, false otherwise
  */
-Uint8 gf3d_point_in_sphere(Vector3D pos,Sphere s);
-
-/**
- * @brief check if two spheres are overlapping
- * @param a sphere A
- * @param b sphere B
- * @param returns true is there is overlap, false otherwise
- */
-Uint8 gf3d_sphere_overlap(Sphere a, Sphere b);
-
-/**
- * @brief check if a sphere and box overlap
- * @param a the Sphere
- * @param b the Box
- * @return true if there is any overlap, false otherwise
- */
-Uint8 gf3d_sphere_box_overlap(Sphere a, Box b);
-
+Uint8 gf3d_box_overlap_back(Box a, Box b);
 /**
  * @brief update a box
  * @param r the Box 

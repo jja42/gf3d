@@ -2,48 +2,37 @@
 #include "simple_logger.h"
 #include "gf3d_model.h"
 #include "gfc_matrix.h"
+#include "gf3d_entity.h"
 
-Box gf3d_box(Vector3D pos, float w, float h,float d)
+Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *ent)
 {
     Box r;
     r.model = gf3d_model_load("cube");
     gfc_matrix_identity(r.mat);
-    r.pos.x = pos.x;
-    r.pos.y = pos.y;
-    r.pos.z = pos.z;
+    r.pos.x = pos.x + offset.x;
+    r.pos.y = pos.y + offset.y;
+    r.pos.z = pos.z + offset.z;
+    r.offset.x = offset.x;
+    r.offset.y = offset.y;
+    r.offset.z = offset.z;
     r.width = w;
     r.height = h;
     r.depth = d;
-    gfc_matrix_make_translation(r.mat, pos);
+    r.ent = ent;
+    gfc_matrix_make_translation(r.mat, r.pos);
+    r.mat[0][0] = w;
+    r.mat[1][1] = h;
+    r.mat[2][2] = d;
     return r;
 }
 void gf3d_box_update(Box *r,Vector3D pos){
-    r->pos.x = pos.x;
-    r->pos.y = pos.y;
-    r->pos.z = pos.z;
-    gfc_matrix_make_translation(r->mat, pos);
+    r->pos.x = pos.x + r->offset.x;
+    r->pos.y = pos.y + r->offset.y;
+    r->pos.z = pos.z + r->offset.z;
+    gfc_matrix_make_translation(r->mat, r->pos);
     r->mat[0][0] = r->width;
     r->mat[1][1] = r->height;
     r->mat[2][2] = r->depth;
-}
-    
-Sphere gf3d_sphere(Vector3D pos, float r)
-{
-    Sphere c;
-    c.pos.x = pos.x;
-    c.pos.y = pos.y;
-    c.pos.z = pos.z;
-    c.radius = r;
-    return c;
-}
-
-Uint8 gf3d_point_in_box(Vector3D pos,Box r)
-{
-    if ((pos.x >= r.pos.x) && (pos.x <= r.pos.x + r.width)&&
-        (pos.y >= r.pos.y) && (pos.y <= r.pos.y + r.height)){
-        return 1;
-    }
-    return 0;
 }
 
 Uint8 gf3d_box_overlap(Box a,Box b)
@@ -57,41 +46,12 @@ Uint8 gf3d_box_overlap(Box a,Box b)
     return 0;
 }
 
-Uint8 gf3d_point_in_sphere(Vector3D pos, Sphere c)
+Uint8 gf3d_box_overlap_back(Box a,Box b)
 {
-    if (vector3d_magnitude_compare(vector3d(c.pos.x-pos.x,c.pos.y-pos.y,c.pos.z-pos.z),c.radius) <= 0)return 1;
-    return 0;
-}
-
-Uint8 gf3d_sphere_overlap(Sphere a, Sphere b)
-{
-    Vector3D v;
-    vector3d_set(v,a.pos.x - b.pos.x,a.pos.y - b.pos.y,a.pos.z - b.pos.z);
-    if (vector3d_magnitude_compare(v,a.radius+b.radius) <= 0)
+    if (a.pos.x >= b.pos.x)
     {
         return 1;
     }
-    return 0;
-}
-
-Uint8 gf3d_sphere_box_overlap(Sphere a, Box b)
-{
-    Box newbox;
-    newbox = gf3d_box(vector3d(b.pos.x - a.radius,b.pos.y,b.pos.z),b.width + a.radius+ a.radius,b.height,b.depth);
-    if (gf3d_point_in_box(vector3d(a.pos.x,a.pos.y,a.pos.z),newbox))return 1;
-    newbox = gf3d_box(vector3d(b.pos.x,b.pos.y - a.radius,b.pos.z),b.width,b.height + a.radius + a.radius,b.depth);
-    if (gf3d_point_in_box(vector3d(a.pos.x,a.pos.y, a.pos.z),newbox))return 1;
-    newbox = gf3d_box(vector3d(b.pos.x,b.pos.y,b.pos.z - a.radius),b.width,b.height, b.depth + a.radius + a.radius);
-    if (gf3d_point_in_box(vector3d(a.pos.x,a.pos.y, a.pos.z),newbox))return 1;
-    
-    if (gf3d_point_in_sphere(vector3d(b.pos.x,b.pos.y,b.pos.z),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x+b.width,b.pos.y,b.pos.z),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x,b.pos.y+b.height,b.pos.z),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x,b.pos.y,b.pos.z+b.depth),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x+b.width,b.pos.y+b.height,b.pos.z),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x+b.width,b.pos.y+b.height,b.pos.z+b.depth),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x+b.width,b.pos.y,b.pos.z+b.depth),a))return 1;
-    if (gf3d_point_in_sphere(vector3d(b.pos.x,b.pos.y+b.height,b.pos.z+b.depth),a))return 1;
     return 0;
 }
 /*eol@eof*/

@@ -1,0 +1,10 @@
+{
+"ent_info":{
+    "name":"boss",
+    "position.x":"-10",
+    "position.y":"0",
+    "position.z":"0",
+    "tag":"boss"
+}
+}
+

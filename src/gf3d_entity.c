@@ -26,6 +26,11 @@ void gf3d_entity_manager_init(Uint32 entity_max)
 {
     gf3d_entity_manager.entity_max = entity_max;
     gf3d_entity_manager.entity_list = (Entity*)gfc_allocate_array(sizeof(Entity),entity_max);
+    int i;
+    for (i = 0; i < gf3d_entity_manager.entity_max; i++)
+    {
+        gf3d_entity_manager.entity_list[i]._inuse = 0;
+    }
     if (!gf3d_entity_manager.entity_list)
     {
         slog("failed to allocate entity list");
@@ -85,7 +90,7 @@ Entity *gf3d_entity_load(char *filename)
     json = sj_load(assetname);
     if (!json)
     {
-        slog("failed to entity file %s",filename);
+        slog("failed to open entity file %s",filename);
         return NULL;
     }
     ent_info = sj_object_get_value(json,"ent_info");
@@ -103,6 +108,7 @@ Entity *gf3d_entity_load(char *filename)
     sj_get_integer_value(sj_object_get_value(ent_info,"position.y"),&y);
     int z= 0;
     sj_get_integer_value(sj_object_get_value(ent_info,"position.z"),&z);
+    strncpy(&ent->tag,sj_get_string_value(sj_object_get_value(ent_info,"tag")),GFCLINELEN);
     ent-> position = vector3d(x,y,z);
     sj_free(json);
     slog("loaded ent info for %s",filename);
@@ -120,6 +126,7 @@ int gf3d_entity_max(){
 Entity *gf3d_entity_get(int i){
         return &gf3d_entity_manager.entity_list[i];
 }
+
 void gf3d_entity_free(Entity *self)
 {
     if (!self)

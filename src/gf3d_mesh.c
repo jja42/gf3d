@@ -178,7 +178,7 @@ void gf3d_mesh_render(Mesh *mesh,VkCommandBuffer commandBuffer, VkDescriptorSet 
         slog("cannot render a NULL mesh");
         return;
     }
-    pipe = gf3d_vgraphics_get_graphics_pipeline();
+    pipe = gf3d_vgraphics_get_graphics_model_pipeline();
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, &mesh->buffer, offsets);
     
     vkCmdBindIndexBuffer(commandBuffer, mesh->faceBuffer, 0, VK_INDEX_TYPE_UINT32);
@@ -237,7 +237,6 @@ void gf3d_mesh_create_vertex_buffer_from_vertices(Mesh *mesh,Vertex *vertices,Ui
     vkFreeMemory(device, stagingBufferMemory, NULL);
     
     mesh->vertexCount = vcount;
-    mesh->bufferMemory = mesh->bufferMemory;
     
     gf3d_mesh_setup_face_buffers(mesh,faces,fcount);
     

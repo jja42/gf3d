@@ -1,10 +1,9 @@
 #ifndef __GF3D_SHAPE_H__
 #define __GF3D_SHAPE_H__
-
+#include "gf3d_entity.h"
 #include "gfc_vector.h"
 #include "gfc_matrix.h"
 #include "gf3d_model.h"
-#include "gf3d_entity.h"
 #include <SDL.h>
 
 typedef struct
@@ -29,13 +28,13 @@ typedef struct
 }Box;
 
 /**
- * @brief make a GF3D Box pointer
+ * @brief make a GF3D Box
  * @param pos the position of the box
  * @param w the width of the box
  * @param h the height of the box
  * @param offset vector offset to align with model
  * @param Ent the entity to associate with this box
- * @return a GF3D Box pointer
+ * @return a GF3D Box
  */
 Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *ent);
 

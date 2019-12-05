@@ -1,5 +1,6 @@
 #ifndef __GF3D_TOUCH_H__
 #define __GF3D_TOUCH_H__
+#include "gf3d_shape.h"
 #include "gf3d_entity.h"
 #include "simple_logger.h"
 #include "gfc_matrix.h"
@@ -57,5 +58,77 @@ void gf3d_boss_touch(Entity *player){
     player->health -= 35;
     slog("Current Health:%f",player->health);
     }
+}
+void gf3d_enemy_think(Entity *player, Entity*enemy, int currentTime,int enemylastTime){
+    Box a;
+    a = gf3d_box(player->position, 2.5, 2.0, 8.0,vector3d(-.5,0,2),player);
+    Box b;
+    b = gf3d_box(enemy->position,3.0, 7.0, 5.0,vector3d(-8,7,0),enemy);
+    if(enemy->_set == 1 && currentTime > enemy->hitstun){
+            if(enemy->health <= 0){
+                enemy->_set = 0;
+                b = gf3d_box(vector3d(100,100,100),0,0,0,vector3d(0,0,0),NULL);
+            }
+        if(a.pos.x >= b.pos.x){
+            if(gf3d_box_overlap(a,b)){
+                if(currentTime > enemylastTime + 1500){
+                enemylastTime = currentTime;
+                gf3d_enemy_touch(player);
+                enemy->position.x -=.005;
+            gf3d_box_update(&b,enemy->position);
+            }
+            }
+            else{
+            enemy->position.x += .005;
+            gf3d_box_update(&b,enemy->position);
+            gfc_matrix_translate(enemy->modelMat,vector3d(.005,0,0));
+            }
+        }
+        if(a.pos.y >= b.pos.y){
+            if(gf3d_box_overlap(a,b)){
+                if(currentTime > enemylastTime + 1500){
+                enemylastTime = currentTime;
+                gf3d_enemy_touch(player);
+                enemy->position.y -=.005;
+            gf3d_box_update(&b,enemy->position);
+            }
+            }
+            else{
+            enemy->position.y += .005;
+            gf3d_box_update(&b,enemy->position);
+            gfc_matrix_translate(enemy->modelMat,vector3d(0,.005,0));
+            }
+    }
+    if(a.pos.x <= b.pos.x){
+            if(gf3d_box_overlap(a,b)){
+                if(currentTime > enemylastTime + 1500){
+                enemylastTime = currentTime;
+                gf3d_enemy_touch(player);
+                enemy->position.x +=.005;
+            gf3d_box_update(&b,enemy->position);
+            }
+            }
+            else{
+            enemy->position.x -= .005;
+            gf3d_box_update(&b,enemy->position);
+            gfc_matrix_translate(enemy->modelMat,vector3d(-.005,0,0));
+            }
+        }
+        if(a.pos.y <= b.pos.y){
+            if(gf3d_box_overlap(a,b)){
+                if(currentTime > enemylastTime + 1500){
+                enemylastTime = currentTime;
+                gf3d_enemy_touch(player);
+                enemy->position.y +=.005;
+            gf3d_box_update(&b,enemy->position);
+            }
+            }
+            else{
+                enemy->position.y -= .005;
+            gf3d_box_update(&b,enemy->position);
+            gfc_matrix_translate(enemy->modelMat,vector3d(0,-.005,0));
+            }
+    }
+        }
 }
 #endif

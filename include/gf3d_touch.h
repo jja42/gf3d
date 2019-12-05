@@ -1,4 +1,5 @@
 #include "gf3d_entity.h"
+#include "gf3d_shape.h"
 
 /**
  * @brief process interactions when the player collides with an entity
@@ -17,3 +18,11 @@ void gf3d_enemy_touch(Entity *player);
  * @param player a ptr to the player
  */
 void gf3d_boss_touch(Entity *player);
+/**
+ * @brief process enemy thinking
+ * @param player a ptr to the player
+ * @param enemey a ptr to the enemy
+ * @param currentTime keeps track of the current game time
+ * @param enemylastTime keeps track of the last time the enemy acted, this is for hitstun purposes
+ */
+void gf3d_enemy_think(Entity *player, Entity*enemy, int currentTime,int enemylastTime);

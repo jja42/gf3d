@@ -1,8 +1,8 @@
 #ifndef __GF3D_ENTITY_H__
 #define __GF3D_ENTITY_H__
-
 #include "gf3d_model.h"
 #include "simple_json.h"
+
 
 typedef enum
 {

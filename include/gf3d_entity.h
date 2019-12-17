@@ -2,14 +2,7 @@
 #define __GF3D_ENTITY_H__
 #include "gf3d_model.h"
 #include "simple_json.h"
-
-
-typedef enum
-{
-    ES_Idle = 0,
-    ES_Dying = 1,
-    ES_Dead = 2
-}EntityState;
+#include "gf3d_shape.h"
 
 typedef struct Entity_S
 {
@@ -22,7 +15,6 @@ typedef struct Entity_S
     Vector3D        acceleration;   /**<acceleration of the entity in 3d space*/
     Vector3D        rotation;       /**<yaw, pitch, and roll of the entity*/
     Vector3D        scale;          /**<*please default to 1,1,1*/
-    EntityState     state;          /**<current state of the entity*/
     void (*think) (struct Entity_S* self);   /**<function called on entity think*/
     void (*update)(struct Entity_S* self);   /**<function called on entity update*/
     void (*touch) (struct Entity_S* self,struct Entity_S* other);   /**<function called on entity think*/
@@ -34,8 +26,10 @@ typedef struct Entity_S
     float           otherStuff;
     char*           name;
     char*           tag;
+    Box             hitbox;
     void *data;                     /**<additional entity specific data*/
-    
+
+    int score;
 }Entity;
 
 /**
@@ -80,7 +74,7 @@ void gf3d_entity_spawn(char* filename);
  */
 void gf3d_entity_spawn_anim(char* filename, Uint32 startframe, Uint32 endframe);
 /**
- * @brief takes information from json file and intitializes the entity with that information
+ * @brief takes information from json file and initializes the entity with that information
  * @param filename name of the file to be loaded
  */
 Entity *gf3d_entity_load(char *filename);

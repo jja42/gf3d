@@ -21,8 +21,12 @@ void gf3d_boss_touch(Entity *player);
 /**
  * @brief process enemy thinking
  * @param player a ptr to the player
- * @param enemey a ptr to the enemy
+ * @param enemy a ptr to the enemy
  * @param currentTime keeps track of the current game time
- * @param enemylastTime keeps track of the last time the enemy acted, this is for hitstun purposes
+ * @param enemyLastTime keeps track of the last time the enemy acted, this is for hitstun purposes
  */
-void gf3d_enemy_think(Entity *player, Entity*enemy, int currentTime,int enemylastTime);
+void gf3d_enemy_think(Entity *player, Entity*enemy, unsigned int currentTime,unsigned int enemyLastTime);
+/**
+ * @brief process player collisions
+ * @param Box to check against other entities, either player or hitbox
+ */

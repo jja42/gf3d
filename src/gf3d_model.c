@@ -48,7 +48,7 @@ void gf3d_model_manager_init(Uint32 max_models,Uint32 chain_length,VkDevice devi
 {
     if (max_models == 0)
     {
-        slog("cannot intilizat model manager for 0 models");
+        slog("cannot intilizate model manager for 0 models");
         return;
     }
     gf3d_model.chain_length = chain_length;
@@ -74,7 +74,7 @@ Model * gf3d_model_new()
             return &gf3d_model.model_list[i];
         }
     }
-    slog("unable to make a new model, out of space");
+    //slog("unable to make a new model, out of space");
     return NULL;
 }
 

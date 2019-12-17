@@ -8,6 +8,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdio.h>
+#include <SDL_ttf.h>
 
 #include "simple_logger.h"
 #include "gfc_types.h"
@@ -178,6 +179,8 @@ void gf3d_vgraphics_setup(
         slog("Unable to initilaize SDL system: %s",SDL_GetError());
         return;
     }
+    TTF_Init();
+    atexit(TTF_Quit);
     atexit(SDL_Quit);
      SDL_ShowCursor(SDL_DISABLE);
     if (fullscreen)

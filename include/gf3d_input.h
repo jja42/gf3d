@@ -12,6 +12,5 @@
  * @param hitbox the hitbox to compare against for collisions
  */
 void gf3d_move_char(int dir, Entity* player, Box *a);
-void gf3d_check_collisions(Entity* player);
 
 #endif

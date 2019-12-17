@@ -2,9 +2,8 @@
 #include "simple_logger.h"
 #include "gf3d_model.h"
 #include "gfc_matrix.h"
-#include "gf3d_entity.h"
 
-Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *ent)
+Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset)
 {
     Box r;
     r.model = gf3d_model_load("cube");
@@ -18,7 +17,6 @@ Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *en
     r.width = w;
     r.height = h;
     r.depth = d;
-    r.ent = ent;
     gfc_matrix_make_translation(r.mat, r.pos);
     r.mat[0][0] = w;
     r.mat[1][1] = h;

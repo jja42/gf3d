@@ -30,9 +30,3 @@ if(dir == 4){
             gf3d_vgraphics_camera_move(vector3d(-.01,0,0));
             }
 }
-/*void gf3d_check_collisions(Entity* player, Box *a){
-    if(gf3d_box_overlap(player->hitbox,b)){
-                if(gf3d_player_touch(player, b->ent) == 0){
-                b = gf3d_box (vector3d(100,100,100),0,0,0,vector3d(0,0,0),NULL);
-                }
-}*/

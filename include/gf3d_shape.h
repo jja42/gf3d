@@ -1,6 +1,5 @@
 #ifndef __GF3D_SHAPE_H__
 #define __GF3D_SHAPE_H__
-#include "gf3d_entity.h"
 #include "gfc_vector.h"
 #include "gfc_matrix.h"
 #include "gf3d_model.h"
@@ -24,7 +23,6 @@ typedef struct
     Model* model;
     Matrix4 mat;
     Vector3D offset;
-    Entity* ent;
 }Box;
 
 /**
@@ -36,7 +34,7 @@ typedef struct
  * @param Ent the entity to associate with this box
  * @return a GF3D Box
  */
-Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset, Entity *ent);
+Box gf3d_box(Vector3D pos, float w, float h,float d, Vector3D offset);
 
 /**
  * @brief check if two boxes are overlapping

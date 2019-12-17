@@ -1,0 +1,3 @@
+/home/gomachi/gf3d/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/gomachi/gf3d/cmake-build-debug/CMakeFiles/gf3d.dir
+/home/gomachi/gf3d/cmake-build-debug/CMakeFiles/edit_cache.dir
